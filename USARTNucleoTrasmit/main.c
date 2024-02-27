@@ -25,6 +25,9 @@ int main(void){
 	uart2_tx_init();
 	while(1){
 		uart2_write('A');
+		// This data can be viewed using any serial Monitor
+		// in Arduino select COM Port and then BaudRate in Serial Monitor
+		// in RealTerm Terminal, do the same and then hit OPEN
 	}
 }
 
@@ -64,7 +67,7 @@ static uint16_t compute_uart_bd(uint32_t PeriphClk, uint32_t Baudrate){
 void uart2_write(int ch){
 	// Make sure that the Transmit Data Register TDR is Empty, SR contains TDR
 	while(!(*USART2_SR & 0X0080)){
-
+		// It will keep on looping here, till TDR is turned ON, that is data is send
 	}
 	// When TDR = 1, then we can write to the Data Register
 	*USART2_DR = (ch & 0XFF);	// ch is for character
