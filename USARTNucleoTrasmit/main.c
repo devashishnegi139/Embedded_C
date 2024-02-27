@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdio.h>
 
 #define GPIOAEN (1U<<0)		//  as GPIOA is 1st pin of RCC ENR
 #define UART2EN (1U<<17)    // 17th pin of ABP1 is USART2
@@ -10,6 +11,11 @@
 void uart2_tx_init(void);
 static uint16_t compute_uart_bd(uint32_t , uint32_t);   // function to calculate Baud Rate
 void uart2_write(int);
+
+int __io_putchar(int ch){
+	uart2_write(ch);
+	return ch;
+}
 
 // pointing to all the register - Memory Map
 uint32_t *AHB1ENR = (uint32_t*) 0X40023830;
@@ -24,10 +30,14 @@ uint32_t *USART2_CR1 = (uint32_t*) 0X4000440C;
 int main(void){
 	uart2_tx_init();	// Initializing the UART
 	while(1){
-		uart2_write('A');
-		// This data can be viewed using any serial Monitor
-		// in Arduino select COM Port and then BaudRate in Serial Monitor
-		// in RealTerm Terminal, do the same and then hit OPEN
+//		uart2_write('A');
+		/* This data can be viewed using any serial Monitor
+		   in Arduino select COM Port and then BaudRate in Serial Monitor
+		   in RealTerm Terminal, do the same and then hit OPEN
+		*/
+
+		// Now we are using printf
+		printf("Hello World\n\r");
 	}
 }
 
@@ -67,7 +77,7 @@ static uint16_t compute_uart_bd(uint32_t PeriphClk, uint32_t Baudrate){
 void uart2_write(int ch){
 	// Make sure that the Transmit Data Register TDR is Empty, SR contains TDR
 	while(!(*USART2_SR & 0X0080)){
-		// We are waiting until the TDR is empty, 
+		// We are waiting until the TDR is empty,
 	}
 	// When it's empty, then we can move the value which we want to print
 	*USART2_DR = (ch & 0XFF);	// ch is for character
